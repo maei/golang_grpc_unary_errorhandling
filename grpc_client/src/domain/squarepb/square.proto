@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package square;
+
+option go_package = "squarepb";
+
+message SquareRootRequest {
+  float a = 1;
+}
+
+message SquareRootResponse {
+  float result = 1;
+}
+
+service SquareRootService{
+  rpc GetSquareRoot(SquareRootRequest) returns (SquareRootResponse) {};
+}
