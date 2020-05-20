@@ -6,6 +6,8 @@ import (
 	"github.com/maei/golang_grpc_unary_errorhandling/grpc_server/src/domain/squarepb"
 	"github.com/maei/shared_utils_go/logger"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"math"
 	"net"
 )
@@ -19,6 +21,10 @@ var (
 func (*server) GetSquareRoot(ctx context.Context, req *squarepb.SquareRootRequest) (*squarepb.SquareRootResponse, error) {
 	logger.Info(fmt.Sprintf("Getting gRPC-Client request with: %v", req.GetA()))
 	a := req.GetA()
+
+	if math.Signbit(float64(a)) {
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("gRPC-Server: Request should be a positiv value. Input %v", a))
+	}
 	squareA := math.Sqrt(float64(a))
 
 	res := &squarepb.SquareRootResponse{

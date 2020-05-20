@@ -13,5 +13,8 @@ message SquareRootResponse {
 }
 
 service SquareRootService{
+  // ERROR Handling
+  // this RPC will throw an exception if the sent number is negativ
+  // The error being sent is of type INVALID_ARGUMENT
   rpc GetSquareRoot(SquareRootRequest) returns (SquareRootResponse) {};
 }
