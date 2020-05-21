@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/maei/golang_grpc_unary_errorhandling/grpc_client/src/client"
 	"github.com/maei/golang_grpc_unary_errorhandling/grpc_client/src/domain/squarepb"
 	"github.com/maei/shared_utils_go/logger"
 	"google.golang.org/grpc/codes"
@@ -14,17 +13,12 @@ import (
 var SquareService squareServiceInterface = &squareService{}
 
 type squareServiceInterface interface {
-	GetSquare(duration time.Duration)
+	GetSquare(c squarepb.SquareRootServiceClient, duration time.Duration)
 }
 
 type squareService struct{}
 
-func (*squareService) GetSquare(duration time.Duration) {
-	conn, connErr := client.GRPCClient.SetClient()
-	if connErr != nil {
-		logger.Error("gRPC-Client: Error while creating connection obj", connErr)
-	}
-	c := squarepb.NewSquareRootServiceClient(conn)
+func (*squareService) GetSquare(c squarepb.SquareRootServiceClient, duration time.Duration) {
 
 	req := &squarepb.SquareRootRequest{
 		A: float32(16),
