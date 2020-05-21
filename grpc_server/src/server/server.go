@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 	"math"
 	"net"
+	"time"
 )
 
 type server struct{}
@@ -20,6 +21,22 @@ var (
 
 func (*server) GetSquareRoot(ctx context.Context, req *squarepb.SquareRootRequest) (*squarepb.SquareRootResponse, error) {
 	logger.Info(fmt.Sprintf("Getting gRPC-Client request with: %v", req.GetA()))
+	for i := 0; i < 3; i++ {
+		check := ctx.Err()
+
+		switch check {
+		case context.DeadlineExceeded:
+			logger.Info("Client deadline exceeded!")
+			return nil, status.Errorf(codes.DeadlineExceeded, "Client deadline exceeded! %v", i)
+		case context.Canceled:
+			logger.Info("Client canceled RPC!")
+			return nil, status.Errorf(codes.Canceled, "The client canceled the request! %v", i)
+		default:
+			fmt.Println(check)
+		}
+
+		time.Sleep(1 * time.Second)
+	}
 	a := req.GetA()
 
 	if math.Signbit(float64(a)) {
